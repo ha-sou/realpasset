@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회사 소개 - REAL.P</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">REAL.<span>P</span></a></div>
+        <div class="nav-links" id="nav-links">
+            <a href="about.html" class="active">회사소개</a>
+            <a href="services.html">자산 플래닝</a>
+            <a href="investment.html">투자정보</a>
+            <a href="contact.html">상담 예약</a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-primary small" onclick="window.location.href='https://open.kakao.com/'">
+                <img src="assets/kakaotalk.svg" alt="카카오톡" class="btn-icon">
+                카톡문의
+            </button>
+            <div class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="subpage-section">
+        <div class="subpage-header fade-in-up">
+            <div class="badge">About Us</div>
+            <h1>전문 자산플래닝의 시작<br><span class="gradient-text">Real Premium Asset Consulting</span></h1>
+            <p>5만 건의 빅데이터와 업계 최고 전문가의 통찰력으로 당신의 자산을 안전하게 인도합니다.</p>
+        </div>
+
+        <div class="content-container fade-in-up delay-2">
+            <div class="about-grid">
+                <div class="glass-card">
+                    <div class="icon-circle verified"></div>
+                    <h3>박병찬 대표 (부자병법)</h3>
+                    <p>유튜브 구독자 23만 명 이상이 증명하는 업계 최고 전문가. 정확한 타이밍과 시장 통찰력으로 투자의 해답을 제시합니다.</p>
+                </div>
+                <div class="glass-card">
+                    <div class="icon-circle secured"></div>
+                    <h3>데이터 기반 컨설팅</h3>
+                    <p>누적 50,000건 이상의 압도적인 상담 데이터와 경험을 바탕으로, 감이 아닌 철저한 분석을 통한 플래닝을 제공합니다.</p>
+                </div>
+                <div class="glass-card">
+                    <div class="icon-circle verified"></div>
+                    <h3>평생 파트너십 (Rapport)</h3>
+                    <p>단순한 일회성 거래가 아닙니다. 매수부터 운영, 매도, 재투자까지 고객님과 함께 성장하는 평생의 투자 파트너가 되겠습니다.</p>
+                </div>
+            </div>
+            
+            <div class="vision-value-section fade-in-up delay-3">
+                <div class="vision-container glass-card vision-glow">
+                    <div class="vision-bg-text">VISION</div>
+                    <h2>Our Vision</h2>
+                    <h3 class="vision-title">BLUE VIRD<span class="gradient-text">;</span></h3>
+                    <div class="vision-line"></div>
+                    <p class="vision-desc">고객의 자산을<br>높은 미래 가치(Value)로<br>인도하는 파랑새</p>
+                </div>
+                
+                <div class="core-value-container glass-card">
+                    <h2>Core Value</h2>
+                    <div class="value-circles">
+                        <div class="circle circle-1"><span>윤리</span></div>
+                        <div class="circle circle-2"><span>상생</span></div>
+                        <div class="circle circle-3"><span>도전</span></div>
+                        <div class="circle circle-4"><span>책임</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+
+        mobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

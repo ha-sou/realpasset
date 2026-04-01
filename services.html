@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자산 플래닝 서비스 - REAL.P</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">REAL.<span>P</span></a></div>
+        <div class="nav-links" id="nav-links">
+            <a href="about.html">회사소개</a>
+            <a href="services.html" class="active">자산 플래닝</a>
+            <a href="investment.html">투자정보</a>
+            <a href="contact.html">상담 예약</a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-primary small" onclick="window.location.href='https://open.kakao.com/'">
+                <img src="assets/kakaotalk.svg" alt="카카오톡" class="btn-icon">
+                카톡문의
+            </button>
+            <div class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="subpage-section">
+        <div class="subpage-header fade-in-up">
+            <div class="badge">Our Services</div>
+            <h1>빈틈없는 과정을 설계하는<br><span class="gradient-text">맞춤형 자산플래닝</span></h1>
+            <p>매수, 매도, 임대, 투자 등 부동산 전 분야에 걸친 솔루션</p>
+        </div>
+
+        <div class="content-container service-container fade-in-up delay-2">
+            <div class="service-card glass-card">
+                <h2 class="gradient-text">01. 정밀한 입지 분석</h2>
+                <p>명동(도심), 용산(글로벌 중심지), 마포(미래 가치 거점) 등 주요 권역별 거시적 및 미시적 가치를 입체적으로 판별합니다.</p>
+            </div>
+            <div class="service-card glass-card">
+                <h2 class="gradient-text">02. 가치 평가 및 매매 타이밍</h2>
+                <p>시장 흐름과 최신 법률 트렌드를 읽어내어 당신의 자산이 가장 높은 가치를 인정받을 수 있는 시점을 제시합니다.</p>
+            </div>
+            <div class="service-card glass-card">
+                <h2 class="gradient-text">03. 안정적인 실행 관리</h2>
+                <p>1:1 전담 컨설턴트가 배정되어 계약부터 세금 체계 점검, 잔금 처리까지 모든 단계에서 발생할 수 있는 리스크를 원천 차단합니다.</p>
+            </div>
+        </div>
+    </main>
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+
+        mobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
