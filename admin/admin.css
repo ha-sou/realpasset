@@ -12,6 +12,12 @@ body {
     min-height: 100vh;
 }
 
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+}
+
 .sidebar {
     width: 250px;
     background: #1f2937;
@@ -19,6 +25,29 @@ body {
     padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        padding: 1rem;
+        box-sizing: border-box;
+    }
+    .sidebar .logo {
+        margin-bottom: 1.5rem;
+    }
+    .nav-container {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        padding-bottom: 5px;
+    }
+    .nav-item {
+        margin-bottom: 0;
+        white-space: nowrap;
+        padding: 0.5rem 1rem;
+    }
 }
 
 .sidebar .logo {
@@ -55,6 +84,20 @@ body {
     flex: 1;
     padding: 2rem 3rem;
     overflow-y: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+    .main-content {
+        padding: 1.5rem 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem;
+    }
 }
 
 header {
@@ -91,6 +134,19 @@ header h1 {
     margin-bottom: 3rem;
 }
 
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
 .stat-card {
     background: white;
     padding: 1.5rem;
@@ -113,7 +169,8 @@ header h1 {
     background: white;
     border-radius: 12px;
     box-shadow: var(--card-shadow);
-    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 table {
