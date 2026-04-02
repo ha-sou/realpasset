@@ -152,14 +152,24 @@ button {
 
 /* Hero Section */
 .hero-section {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-areas: 
+        "text image"
+        "stats image"
+        "actions image";
     align-items: center;
-    justify-content: space-between;
+    gap: 20px 4rem;
     padding: 6rem 5% 5rem;
     max-width: 1400px;
     margin: 0 auto;
     min-height: calc(100vh - 80px);
 }
+
+.hero-content-text { grid-area: text; }
+.hero-image-wrapper { grid-area: image; }
+.stats-container { grid-area: stats; }
+.hero-actions { grid-area: actions; }
 
 .hero-content {
     flex: 1;
@@ -183,7 +193,7 @@ button {
     text-transform: uppercase;
 }
 
-.hero-content h1 {
+.hero-content-text h1 {
     font-size: 5rem;
     font-weight: 900;
     line-height: 1.1;
@@ -192,7 +202,7 @@ button {
     color: #0f172a;
 }
 
-.hero-content p {
+.hero-content-text p {
     font-size: 1.4rem;
     color: #64748b;
     line-height: 1.6;
@@ -438,32 +448,33 @@ button {
     .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -7px); }
 
     .hero-section {
-        flex-direction: column;
-        padding: 6rem 5% 3rem;
-        text-align: center;
-        gap: 3rem;
-    }
-
-    .hero-content {
-        padding-right: 0;
-        max-width: 100%;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        padding: 75px 5% 30px;
+        text-align: center;
+        gap: 1.5rem;
+        min-height: auto;
     }
 
-    .hero-content h1 {
+    .hero-content-text { order: 1; }
+    .hero-image-wrapper { order: 2; width: 100%; margin: 1rem 0; }
+    .stats-container { order: 3; width: 100%; margin: 1rem 0 !important; }
+    .hero-actions { order: 4; width: 100%; display: flex; flex-direction: column; gap: 0.8rem; }
+
+    .hero-content-text h1 {
         font-size: 2.2rem;
         letter-spacing: -1px;
         line-height: 1.25;
         margin-bottom: 1.5rem;
     }
 
-    .hero-content p {
+    .hero-content-text p {
         font-size: 1rem;
         margin-bottom: 2rem;
         word-break: keep-all;
         max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .hero-actions {
@@ -475,8 +486,9 @@ button {
     }
 
     .stats-container {
-        flex-direction: column;
-        gap: 1.5rem;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 0.5rem;
         width: 100%;
     }
 
