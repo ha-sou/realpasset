@@ -1,6 +1,9 @@
 [build]
-  # 정적 웹사이트이므로 루트 디렉토리를 그대로 배포합니다.
   publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  directory = "netlify/functions"
 
 [build.processing]
   # Netlify의 에셋 최적화 설정을 코드에서 관리합니다.

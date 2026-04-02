@@ -37,27 +37,28 @@
         </div>
 
         <div class="content-container fade-in-up delay-2">
-            <form class="contact-form glass-card">
+            <form id="contactForm" class="contact-form glass-card">
                 <div class="form-group">
-                    <label>성명</label>
-                    <input type="text" placeholder="이름을 입력해주세요" required>
+                    <label for="name">성명</label>
+                    <input type="text" id="name" name="name" placeholder="이름을 입력해주세요" required>
                 </div>
                 <div class="form-group">
-                    <label>연락처</label>
-                    <input type="tel" placeholder="010-0000-0000" required>
+                    <label for="phone">연락처</label>
+                    <input type="tel" id="phone" name="phone" placeholder="010-0000-0000" required>
                 </div>
                 <div class="form-group">
-                    <label>관심 지역/분야</label>
-                    <select>
-                        <option>명동/도심권 소액 투자</option>
-                        <option>용산 글로벌 중심지 투자</option>
-                        <option>마포 미래 가치 거점 투자</option>
-                        <option>기타 자산 포트폴리오 상담</option>
+                    <label for="sector">관심 지역/분야</label>
+                    <select id="sector" name="sector" required>
+                        <option value="">분야를 선택해주세요</option>
+                        <option value="명동/도심권 소액 투자">명동/도심권 소액 투자</option>
+                        <option value="용산 글로벌 중심지 투자">용산 글로벌 중심지 투자</option>
+                        <option value="마포 미래 가치 거점 투자">마포 미래 가치 거점 투자</option>
+                        <option value="기타 자산 포트폴리오 상담">기타 자산 포트폴리오 상담</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>상담 내용</label>
-                    <textarea rows="4" placeholder="궁금하신 점이나 현재 고민이신 부분을 자유롭게 남겨주세요." required></textarea>
+                    <label for="message">상담 내용</label>
+                    <textarea id="message" name="message" rows="4" placeholder="궁금하신 점이나 현재 고민이신 부분을 자유롭게 남겨주세요." required></textarea>
                 </div>
                 <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">대면 상담 예약하기</button>
             </form>
@@ -70,6 +71,46 @@
         mobileMenu.addEventListener('click', () => {
             mobileMenu.classList.toggle('active');
             navLinks.classList.toggle('active');
+        });
+
+        // 폼 제출 처리
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = '제출 중...';
+
+            const formData = new FormData(e.target);
+            const data = {
+                type: 'GENERAL',
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                sector: formData.get('sector'),
+                message: formData.get('message')
+            };
+
+            try {
+                const response = await fetch('/.netlify/functions/submit-inquiry', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('상담 예약이 완료되었습니다. 담당자가 곧 연락드리겠습니다.');
+                    window.location.href = 'index.html';
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.error || '제출에 실패했습니다.');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('오류가 발생했습니다: ' + err.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
         });
     </script>
 </body>
