@@ -438,19 +438,32 @@ button {
     .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -7px); }
 
     .hero-section {
-        padding: 4rem 5%;
+        flex-direction: column;
+        padding: 6rem 5% 3rem;
+        text-align: center;
+        gap: 3rem;
+    }
+
+    .hero-content {
+        padding-right: 0;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .hero-content h1 {
-        font-size: 2.8rem;
-        letter-spacing: -1.5px;
-        line-height: 1.2;
+        font-size: 2.2rem;
+        letter-spacing: -1px;
+        line-height: 1.25;
+        margin-bottom: 1.5rem;
     }
 
     .hero-content p {
-        font-size: 1.1rem;
-        margin-bottom: 2.5rem;
+        font-size: 1rem;
+        margin-bottom: 2rem;
         word-break: keep-all;
+        max-width: 400px;
     }
 
     .hero-actions {
@@ -471,8 +484,17 @@ button {
         display: none;
     }
 
+    .hero-image-wrapper {
+        width: 100%;
+    }
+
     .hero-image {
         max-width: 100%;
+        height: auto;
+    }
+
+    .floating-card {
+        display: none; /* Hide floating cards on mobile to reduce clutter */
     }
 
     .vision-value-section {
@@ -498,11 +520,16 @@ button {
 
 @media (max-width: 480px) {
     .hero-content h1 {
-        font-size: 2.2rem;
+        font-size: 1.8rem;
     }
     
     .hero-section {
-        padding-top: 3rem;
+        padding-top: 4rem;
+        gap: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 0.95rem;
     }
 
     .badge {
