@@ -1,3 +1,5 @@
+let allInquiries = []; // Store globally for CSV export
+
 document.addEventListener('DOMContentLoaded', () => {
     // Check authentication
     const user = JSON.parse(localStorage.getItem('adminUser'));
@@ -14,6 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
     });
 
+    // CSV Download
+    document.getElementById('downloadCsvBtn').addEventListener('click', () => {
+        downloadCSV();
+    });
+
     // Load Inquiries
     loadInquiries();
 });
@@ -22,6 +29,7 @@ async function loadInquiries() {
     try {
         const response = await fetch('/.netlify/functions/admin-inquiries');
         const inquiries = await response.json();
+        allInquiries = inquiries; // Store for CSV export
         
         const tableBody = document.getElementById('inquiryTable');
         tableBody.innerHTML = '';
@@ -91,4 +99,51 @@ async function updateInquiryStatus(id, newStatus) {
         console.error('Error updating status:', err);
         alert('서버 통신 오류가 발생했습니다.');
     }
+}
+
+function downloadCSV() {
+    if (allInquiries.length === 0) {
+        alert('다운로드할 데이터가 없습니다.');
+        return;
+    }
+
+    // CSV Header (Korean)
+    const headers = ['유형', '성함', '연락처', '이메일', '관심지역', '예산', '업종', '상담내용', '상태', '신청일시'];
+    
+    // CSV Rows
+    const rows = allInquiries.map(inquiry => {
+        const date = new Date(inquiry.created_at).toLocaleString('ko-KR');
+        return [
+            inquiry.type || '',
+            inquiry.name || '',
+            inquiry.phone || '',
+            inquiry.email || '',
+            inquiry.region || '',
+            inquiry.budget || '',
+            inquiry.sector || '',
+            // Escape quotes in message and wrap in quotes
+            `"${(inquiry.message || '').replace(/"/g, '""')}"`,
+            inquiry.status || '',
+            date
+        ];
+    });
+
+    // Build CSV string with BOM for Excel Korean support
+    const BOM = '\uFEFF';
+    const csvContent = BOM + [
+        headers.join(','),
+        ...rows.map(row => row.join(','))
+    ].join('\n');
+
+    // Create and trigger download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const today = new Date().toISOString().slice(0, 10);
+    link.href = url;
+    link.download = `REALP_문의내역_${today}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 }

@@ -152,24 +152,25 @@ button {
 
 /* Hero Section */
 .hero-section {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    grid-template-areas: 
-        "text image"
-        "stats image"
-        "actions image";
+    display: flex;
     align-items: center;
-    gap: 20px 4rem;
+    justify-content: space-between;
+    gap: 4rem;
     padding: 6rem 5% 5rem;
     max-width: 1400px;
     margin: 0 auto;
     min-height: calc(100vh - 80px);
 }
 
-.hero-content-text { grid-area: text; }
-.hero-image-wrapper { grid-area: image; }
-.stats-container { grid-area: stats; }
-.hero-actions { grid-area: actions; }
+.hero-content {
+    flex: 1;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.desktop-only { display: block !important; }
+.mobile-only { display: none !important; }
 
 .hero-content {
     flex: 1;
@@ -209,6 +210,7 @@ button {
     margin-bottom: 3.5rem;
     font-weight: 500;
     letter-spacing: -0.5px;
+    max-width: 550px;
 }
 
 .hero-actions {
@@ -450,16 +452,21 @@ button {
     .hero-section {
         display: flex;
         flex-direction: column;
-        padding: 75px 5% 30px;
+        padding: 60px 5% 30px;
         text-align: center;
-        gap: 1.5rem;
+        gap: 2rem;
         min-height: auto;
     }
 
-    .hero-content-text { order: 1; }
-    .hero-image-wrapper { order: 2; width: 100%; margin: 1rem 0; }
-    .stats-container { order: 3; width: 100%; margin: 1rem 0 !important; }
-    .hero-actions { order: 4; width: 100%; display: flex; flex-direction: column; gap: 0.8rem; }
+    .hero-content {
+        flex: 1;
+        width: 100%;
+        max-width: 100%;
+        padding-right: 0;
+    }
+
+    .desktop-only { display: none !important; }
+    .mobile-only { display: block !important; width: 100%; margin: 1.5rem 0; }
 
     .hero-content-text h1 {
         font-size: 2.2rem;
@@ -470,7 +477,7 @@ button {
 
     .hero-content-text p {
         font-size: 1rem;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
         word-break: keep-all;
         max-width: 400px;
         margin-left: auto;
@@ -487,9 +494,26 @@ button {
 
     .stats-container {
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: space-around; /* Distribute more evenly */
         gap: 0.5rem;
         width: 100%;
+        padding: 1.2rem 0.8rem; /* Dramatically reduced from 2.5rem for mobile */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .stat-item {
+        text-align: center;
+        flex: 1;
+    }
+
+    .stat-item h3 {
+        font-size: 1.35rem; /* Reduced from 1.7rem for volume */
+    }
+
+    .stat-item p {
+        font-size: 0.78rem; /* Reduced from 0.9rem for volume */
+        white-space: nowrap; /* Prevent ugly wrapping if possible */
     }
 
     .divider {
