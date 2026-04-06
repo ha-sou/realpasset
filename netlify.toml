@@ -6,23 +6,7 @@
   directory = "netlify/functions"
 
 [build.processing]
-  # Netlify의 에셋 최적화 설정을 코드에서 관리합니다.
-  skip_processing = false
-
-[build.processing.html]
-  # .html 확장자 없이도 접속 가능하도록 설정합니다. (예: /about.html -> /about)
-  pretty_urls = true
-
-[build.processing.css]
-  bundle = false
-  minify = false
-
-[build.processing.js]
-  bundle = false
-  minify = false
-
-[build.processing.images]
-  compress = true
+  skip_processing = true
 
 [[headers]]
   # 모든 파일에 대한 보안 및 캐시 헤더 설정
