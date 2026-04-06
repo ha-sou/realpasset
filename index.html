@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>부동산의 미래를 경험하세요</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">REAL.<span>P</span></a></div>
+        <div class="nav-links" id="nav-links">
+            <a href="about.html">회사소개</a>
+            <a href="services.html">자산 플래닝</a>
+            <a href="investment.html">투자정보</a>
+            <a href="contact.html">상담 예약</a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-primary small" onclick="window.location.href='https://open.kakao.com/'">
+                <img src="assets/kakaotalk.svg" alt="카카오톡" class="btn-icon">
+                카톡문의
+            </button>
+            <div class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="hero-section">
+        <div class="hero-content">
+            <div class="hero-content-text">
+                <div class="badge fade-in-up">Real Premium Asset Consulting</div>
+                <h1 class="fade-in-up delay-1">부동산의 미래를<br><span class="gradient-text">경험하세요.</span></h1>
+                <p class="fade-in-up delay-2">부동산의 참된 가치를 발굴하고 증대시키는<br>혁신적인 비즈니스 정신</p>
+            </div>
+            
+            <!-- Mobile-only image for the specific vertical order (Visible on mobile only) -->
+            <div class="hero-image-wrapper mobile-only fade-in-scale">
+                <img src="assets/hero-image.png" alt="프롭테크 미래 이미지" class="hero-image">
+            </div>
+
+            <div class="stats-container fade-in-up delay-4">
+                <div class="stat-item">
+                    <h3>50,000+</h3>
+                    <p>누적 자산 컨설팅</p>
+                </div>
+                <div class="divider"></div>
+                <div class="stat-item">
+                    <h3>23만+</h3>
+                    <p>부자병법 구독자</p>
+                </div>
+                <div class="divider"></div>
+                <div class="stat-item">
+                    <h3>1:1</h3>
+                    <p>맞춤 자산 플래닝</p>
+                </div>
+            </div>
+
+            <div class="hero-actions fade-in-up delay-3">
+                <button class="btn-primary">대면 전문상담 신청</button>
+                <button class="btn-secondary">맞춤 솔루션 알아보기</button>
+            </div>
+        </div>
+
+        <!-- Desktop-only image for the two-column layout (Visible on desktop only) -->
+        <div class="hero-image-wrapper desktop-only fade-in-scale">
+            <div class="image-glow"></div>
+            <img src="assets/hero-image.png" alt="프롭테크 미래 이미지" class="hero-image">
+            
+            <div class="floating-card top-right float-anim">
+                <div class="icon-circle verified"></div>
+                <span>가치 발굴 성공</span>
+            </div>
+            
+            <div class="floating-card bottom-left float-anim-delayed">
+                <div class="icon-circle secured"></div>
+                <span>정확한 매매 타이밍</span>
+            </div>
+        </div>
+    </main>
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+
+        mobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

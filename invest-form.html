@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>투자 문의 신청 - REAL.P</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">REAL.<span>P</span></a></div>
+        <div class="nav-links" id="nav-links">
+            <a href="about.html">회사소개</a>
+            <a href="services.html">자산 플래닝</a>
+            <a href="investment.html">투자정보</a>
+            <a href="contact.html">상담 예약</a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-primary small" onclick="window.location.href='https://open.kakao.com/'">
+                <img src="assets/kakaotalk.svg" alt="카카오톡" class="btn-icon">
+                카톡문의
+            </button>
+            <div class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="subpage-section">
+        <div class="subpage-header fade-in-up">
+            <div class="badge">Investment Inquiry</div>
+            <h1><span id="selected-region" class="gradient-text">전체 권역</span><br>투자 상세 문의</h1>
+            <p>선택하신 지역에 대한 정밀 데이터 분석 및 맞춤형 투자 포트폴리오를 제안해 드립니다.</p>
+        </div>
+
+        <div class="contact-form fade-in-up delay-2">
+            <div class="glass-card">
+                <form id="investInquiryForm">
+                    <div class="form-group">
+                        <label for="region">관심 투자 지역</label>
+                        <select id="region" name="region" required>
+                            <option value="">지역을 선택해 주세요</option>
+                            <!-- 권역 옵션은 DB에서 동적으로 로드됩니다 -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">성함</label>
+                        <input type="text" id="name" name="name" placeholder="성함을 입력해 주세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">연락처</label>
+                        <input type="tel" id="phone" name="phone" placeholder="010-0000-0000" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="budget">투자 희망 예산</label>
+                        <select id="budget" name="budget" required>
+                            <option value="">예산 범위를 선택해 주세요</option>
+                            <option value="5억 미만">5억 미만</option>
+                            <option value="5억 ~ 10억">5억 ~ 10억</option>
+                            <option value="10억 ~ 30억">10억 ~ 30억</option>
+                            <option value="30억 이상">30억 이상</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">문의 상세 내용</label>
+                        <textarea id="message" name="message" rows="5" placeholder="궁금하신 점이나 특별히 고려하시는 사항을 적어주세요."></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">상담 신청하기</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // URL 파라미터에서 지역 정보 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const regionParam = urlParams.get('region');
+
+        // DB에서 권역 옵션 동적 로드
+        async function loadRegionOptions() {
+            const regionSelect = document.getElementById('region');
+            const regionTitle = document.getElementById('selected-region');
+
+            try {
+                const response = await fetch('/.netlify/functions/regions');
+                const regions = await response.json();
+
+                regions.forEach(region => {
+                    const option = document.createElement('option');
+                    option.value = region.region_key;
+                    option.textContent = region.name;
+                    regionSelect.appendChild(option);
+                });
+
+                // URL 파라미터가 있으면 자동 선택
+                if (regionParam) {
+                    regionSelect.value = regionParam;
+                    regionTitle.textContent = regionParam + ' 권역';
+                }
+            } catch (err) {
+                console.error('Error loading regions:', err);
+            }
+        }
+
+        loadRegionOptions();
+
+        // 모바일 메뉴 토글
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+
+        mobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // 폼 제출 처리
+        document.getElementById('investInquiryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = '제출 중...';
+
+            const formData = new FormData(e.target);
+            const data = {
+                type: 'INVESTMENT',
+                region: formData.get('region'),
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                budget: formData.get('budget'),
+                message: formData.get('message')
+            };
+
+            try {
+                const response = await fetch('/.netlify/functions/submit-inquiry', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('상담 신청이 완료되었습니다. 담당자가 곧 연락드리겠습니다.');
+                    window.location.href = 'index.html';
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.error || '제출에 실패했습니다.');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('오류가 발생했습니다: ' + err.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+    </script>
+</body>
+</html>

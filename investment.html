@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>투자정보 - REAL.P</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">REAL.<span>P</span></a></div>
+        <div class="nav-links" id="nav-links">
+            <a href="about.html">회사소개</a>
+            <a href="services.html">자산 플래닝</a>
+            <a href="investment.html" class="active">투자정보</a>
+            <a href="contact.html">상담 예약</a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-primary small" onclick="window.location.href='https://open.kakao.com/'">
+                <img src="assets/kakaotalk.svg" alt="카카오톡" class="btn-icon">
+                카톡문의
+            </button>
+            <div class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="subpage-section investment-page">
+        <div class="subpage-header fade-in-up">
+            <div class="badge">Investment Insights</div>
+            <h1>데이터로 증명하는<br><span class="gradient-text">부동산 투자 인사이트</span></h1>
+            <p>리얼피에셋컨설팅만의 압도적인 데이터로 핵심 권역별 투자 포인트와 시장 흐름을 분석합니다.</p>
+        </div>
+
+        <div class="content-container fade-in-up delay-2">
+            <div class="investment-grid" id="investmentGrid">
+                <!-- Skeleton Loading -->
+                <div class="region-card skeleton-card">
+                    <div class="region-image-container" style="background:#e5e7eb"></div>
+                    <div class="region-info">
+                        <div style="width:80px;height:14px;background:#e5e7eb;border-radius:4px;margin-bottom:8px"></div>
+                        <div style="width:120px;height:20px;background:#e5e7eb;border-radius:4px;margin-bottom:8px"></div>
+                        <div style="width:100%;height:14px;background:#e5e7eb;border-radius:4px"></div>
+                    </div>
+                </div>
+                <div class="region-card skeleton-card">
+                    <div class="region-image-container" style="background:#e5e7eb"></div>
+                    <div class="region-info">
+                        <div style="width:80px;height:14px;background:#e5e7eb;border-radius:4px;margin-bottom:8px"></div>
+                        <div style="width:120px;height:20px;background:#e5e7eb;border-radius:4px;margin-bottom:8px"></div>
+                        <div style="width:100%;height:14px;background:#e5e7eb;border-radius:4px"></div>
+                    </div>
+                </div>
+                <div class="region-card skeleton-card">
+                    <div class="region-image-container" style="background:#e5e7eb"></div>
+                    <div class="region-info">
+                        <div style="width:80px;height:14px;background:#e5e7eb;border-radius:4px;margin-bottom:8px"></div>
+                        <div style="width:120px;height:20px;background:#e5e7eb;border-radius:4px;margin-bottom:8px"></div>
+                        <div style="width:100%;height:14px;background:#e5e7eb;border-radius:4px"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card full-width-card fade-in-up delay-3" style="margin-top: 3rem; text-align: center;">
+                <h2 class="gradient-text">최신 시장 트렌드 & 리포트</h2>
+                <p>리얼피에셋컨설팅은 매월 5만 건 이상의 상담 데이터와 법률/세무 트렌드를 결합한 전문 리포트를 발행합니다.</p>
+                <div class="hero-actions" style="justify-content: center; margin-top: 2rem;">
+                    <button class="btn-primary" onclick="window.location.href='contact.html'">상담받고 리포트 보기</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+        mobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // Load regions dynamically from database
+        async function loadRegions() {
+            const grid = document.getElementById('investmentGrid');
+
+            try {
+                const response = await fetch('/.netlify/functions/regions');
+                const regions = await response.json();
+
+                grid.innerHTML = '';
+
+                if (regions.length === 0) {
+                    grid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align:center; padding:3rem; color:#9ca3af;">
+                            <p>현재 등록된 투자 권역이 없습니다.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                regions.forEach((region, index) => {
+                    const card = document.createElement('a');
+                    card.href = `invest-form.html?region=${encodeURIComponent(region.region_key)}`;
+                    card.className = 'region-card';
+                    card.style.animationDelay = `${index * 0.05}s`;
+
+                    const imgSrc = region.image_url || '';
+                    const imgTag = imgSrc
+                        ? `<img src="${imgSrc}" alt="${region.name}" class="region-image">`
+                        : `<div class="region-image" style="background:#1a1a2e;display:flex;align-items:center;justify-content:center;color:#4a5568;font-size:0.9rem">이미지 없음</div>`;
+
+                    card.innerHTML = `
+                        <div class="region-image-container">
+                            ${imgTag}
+                        </div>
+                        <div class="region-info">
+                            <span class="region-tag">${region.tag}</span>
+                            <h3>${region.name}</h3>
+                            <p>${region.description}</p>
+                            <span class="apply-link">투자 문의하기 →</span>
+                        </div>
+                    `;
+
+                    grid.appendChild(card);
+                });
+
+            } catch (err) {
+                console.error('Error loading regions:', err);
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align:center; padding:3rem; color:#ef4444;">
+                        <p>데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</p>
+                    </div>
+                `;
+            }
+        }
+
+        loadRegions();
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  directory = "netlify/functions"
+
+[build.processing]
+  # Netlify의 에셋 최적화 설정을 코드에서 관리합니다.
+  skip_processing = false
+
+[build.processing.html]
+  # .html 확장자 없이도 접속 가능하도록 설정합니다. (예: /about.html -> /about)
+  pretty_urls = true
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.images]
+  compress = true
+
+[[headers]]
+  # 모든 파일에 대한 보안 및 캐시 헤더 설정
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  # 이미지 등 에셋에 대한 강력한 캐싱 설정
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

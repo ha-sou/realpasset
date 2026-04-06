@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상담 예약 - REAL.P</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">REAL.<span>P</span></a></div>
+        <div class="nav-links" id="nav-links">
+            <a href="about.html">회사소개</a>
+            <a href="services.html">자산 플래닝</a>
+            <a href="investment.html">투자정보</a>
+            <a href="contact.html" class="active">상담 예약</a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-primary small" onclick="window.location.href='https://open.kakao.com/'">
+                <img src="assets/kakaotalk.svg" alt="카카오톡" class="btn-icon">
+                카톡문의
+            </button>
+            <div class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="subpage-section">
+        <div class="subpage-header fade-in-up">
+            <div class="badge" id="pageBadge">Contact Us</div>
+            <h1 id="pageHeading">투자의 막연한 불안을<br><span class="gradient-text" id="pageSubtitle">명확한 확신으로</span></h1>
+            <p id="pageDescription">전문가와 함께하는 대면 상담을 지금 바로 신청하세요.</p>
+        </div>
+
+        <div class="content-container fade-in-up delay-2">
+            <form id="contactForm" class="contact-form glass-card">
+                <div id="dynamicFields">
+                    <!-- Fields will be dynamically loaded here -->
+                    <div style="text-align:center; padding:2rem; color:#9ca3af;">
+                        <p>폼을 불러오는 중...</p>
+                    </div>
+                </div>
+                <input type="hidden" id="inquiryType" value="GENERAL">
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;" id="submitBtn" disabled>대면 상담 예약하기</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+
+        mobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // Get slug from URL params (default: 'contact')
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageSlug = urlParams.get('page') || 'contact';
+
+        async function loadFormPage() {
+            try {
+                const response = await fetch(`/.netlify/functions/inquiry-pages?slug=${pageSlug}`);
+                if (!response.ok) {
+                    document.getElementById('dynamicFields').innerHTML = `
+                        <div style="text-align:center; padding:2rem; color:#ef4444;">
+                            <p>문의 페이지를 찾을 수 없습니다.</p>
+                            <a href="contact.html" style="color:#2563eb">기본 상담 페이지로 이동</a>
+                        </div>`;
+                    return;
+                }
+
+                const page = await response.json();
+
+                // Update page header
+                document.getElementById('pageBadge').textContent = page.badge_text || 'Contact Us';
+                document.title = `${page.title} - REAL.P`;
+                document.getElementById('inquiryType').value = page.inquiry_type || 'GENERAL';
+
+                if (page.subtitle) {
+                    document.getElementById('pageSubtitle').textContent = page.subtitle;
+                }
+                if (page.description) {
+                    document.getElementById('pageDescription').textContent = page.description;
+                }
+
+                // Render fields
+                const container = document.getElementById('dynamicFields');
+                container.innerHTML = '';
+
+                if (!page.fields || page.fields.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:#9ca3af;padding:2rem">이 페이지에 등록된 항목이 없습니다.</p>';
+                    return;
+                }
+
+                page.fields.forEach(field => {
+                    const group = document.createElement('div');
+                    group.className = 'form-group';
+
+                    const label = document.createElement('label');
+                    label.setAttribute('for', field.field_name);
+                    label.textContent = field.field_label;
+                    group.appendChild(label);
+
+                    let input;
+
+                    switch (field.field_type) {
+                        case 'select': {
+                            input = document.createElement('select');
+                            input.id = field.field_name;
+                            input.name = field.field_name;
+                            if (field.is_required) input.required = true;
+
+                            const defaultOpt = document.createElement('option');
+                            defaultOpt.value = '';
+                            defaultOpt.textContent = field.placeholder || '선택해주세요';
+                            input.appendChild(defaultOpt);
+
+                            const opts = typeof field.options === 'string' ? JSON.parse(field.options) : (field.options || []);
+                            opts.forEach(opt => {
+                                const option = document.createElement('option');
+                                option.value = opt;
+                                option.textContent = opt;
+                                input.appendChild(option);
+                            });
+
+                            // Auto-select from URL params
+                            const paramVal = urlParams.get(field.field_name);
+                            if (paramVal) {
+                                setTimeout(() => { input.value = paramVal; }, 0);
+                            }
+                            break;
+                        }
+                        case 'textarea': {
+                            input = document.createElement('textarea');
+                            input.id = field.field_name;
+                            input.name = field.field_name;
+                            input.rows = 4;
+                            input.placeholder = field.placeholder || '';
+                            if (field.is_required) input.required = true;
+                            break;
+                        }
+                        default: {
+                            input = document.createElement('input');
+                            input.type = field.field_type || 'text';
+                            input.id = field.field_name;
+                            input.name = field.field_name;
+                            input.placeholder = field.placeholder || '';
+                            if (field.is_required) input.required = true;
+
+                            // Auto-fill from URL params
+                            const paramVal = urlParams.get(field.field_name);
+                            if (paramVal) input.value = paramVal;
+                            break;
+                        }
+                    }
+
+                    group.appendChild(input);
+                    container.appendChild(group);
+                });
+
+                document.getElementById('submitBtn').disabled = false;
+
+            } catch (err) {
+                console.error('Error loading form page:', err);
+                document.getElementById('dynamicFields').innerHTML = `
+                    <div style="text-align:center; padding:2rem; color:#ef4444;">
+                        <p>폼을 불러오는 중 오류가 발생했습니다.</p>
+                    </div>`;
+            }
+        }
+
+        loadFormPage();
+
+        // Form submit
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = '제출 중...';
+
+            const formData = new FormData(e.target);
+            const data = { type: document.getElementById('inquiryType').value };
+
+            for (const [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+
+            // Map known fields for backward compatibility
+            if (!data.message && !data.sector && !data.region) {
+                data.message = data.message || '-';
+            }
+
+            try {
+                const response = await fetch('/.netlify/functions/submit-inquiry', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('상담 예약이 완료되었습니다. 담당자가 곧 연락드리겠습니다.');
+                    window.location.href = 'index.html';
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.error || '제출에 실패했습니다.');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('오류가 발생했습니다: ' + err.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+    </script>
+</body>
+</html>

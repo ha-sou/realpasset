@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 대시보드 - REAL.P</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">REAL.<span>P</span></div>
+        <div class="nav-container">
+            <div class="nav-item active" data-tab="inquiries">📋 문의 관리</div>
+            <div class="nav-item" data-tab="inquiry-pages">📝 문의 페이지 관리</div>
+            <div class="nav-item" data-tab="regions">🏙️ 투자정보 관리</div>
+            <div class="nav-item" data-tab="settings">⚙️ 설정</div>
+        </div>
+    </aside>
+    <main class="main-content">
+        <!-- Header -->
+        <header>
+            <h1 id="pageTitle">문의 내역 관리</h1>
+            <div class="user-info">
+                <button class="download-btn" id="downloadCsvBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    엑셀 다운로드
+                </button>
+                <span id="adminName">Loading...</span>
+                <button class="logout-btn" id="logoutBtn">로그아웃</button>
+            </div>
+        </header>
+
+        <!-- ═══════════════ Tab: 문의 관리 ═══════════════ -->
+        <div id="tab-inquiries" class="tab-content active">
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <h3>전체 문의</h3>
+                    <div class="value" id="totalCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>대기 중</h3>
+                    <div class="value" id="pendingCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>연락 완료</h3>
+                    <div class="value" id="contactedCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>완료 사례</h3>
+                    <div class="value" id="completedCount">0</div>
+                </div>
+            </section>
+
+            <section class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>유형</th>
+                            <th>성함</th>
+                            <th>연락처</th>
+                            <th>관심지역/예산</th>
+                            <th>상담내용</th>
+                            <th>신청일시</th>
+                            <th>상태</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inquiryTable">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- ═══════════════ Tab: 투자정보 관리 ═══════════════ -->
+        <div id="tab-regions" class="tab-content">
+            <div class="regions-header">
+                <div class="regions-header-info">
+                    <p class="regions-subtitle">투자정보 페이지에 표시되는 권역 카드를 관리합니다. 순서를 변경하거나, 활성/비활성화하여 노출 여부를 제어할 수 있습니다.</p>
+                </div>
+                <button class="add-region-btn" id="addRegionBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    권역 추가
+                </button>
+            </div>
+
+            <section class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:60px">순서</th>
+                            <th style="width:80px">이미지</th>
+                            <th>권역명</th>
+                            <th>태그</th>
+                            <th>설명</th>
+                            <th style="width:80px">상태</th>
+                            <th style="width:130px">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="regionsTable">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- ═══════════════ Tab: 문의 페이지 관리 ═══════════════ -->
+        <div id="tab-inquiry-pages" class="tab-content">
+            <div class="regions-header">
+                <div class="regions-header-info">
+                    <p class="regions-subtitle">문의 페이지와 폼 항목을 관리합니다. 새로운 문의 페이지를 만들거나, 기존 페이지의 폼 필드를 추가/수정/삭제할 수 있습니다.</p>
+                </div>
+                <button class="add-region-btn" id="addPageBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    문의 페이지 추가
+                </button>
+            </div>
+
+            <div id="inquiryPagesContainer">
+                <!-- Pages will be loaded here dynamically -->
+            </div>
+        </div>
+
+        <!-- ═══════════════ Tab: 설정 ═══════════════ -->
+        <div id="tab-settings" class="tab-content">
+            <div class="stat-card" style="max-width: 500px;">
+                <h3>시스템 정보</h3>
+                <p style="color: #6b7280; margin-top: 1rem;">REAL.P 관리자 대시보드 v1.2</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- ═══════════════ Region Add/Edit Modal ═══════════════ -->
+    <div class="modal-overlay" id="regionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">권역 추가</h2>
+                <button class="modal-close" id="modalCloseBtn">&times;</button>
+            </div>
+            <form id="regionForm">
+                <input type="hidden" id="regionId">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regionName">권역명 <span class="required">*</span></label>
+                            <input type="text" id="regionName" placeholder="예: 공덕 권역" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="regionKey">권역키 (URL용) <span class="required">*</span></label>
+                            <input type="text" id="regionKey" placeholder="예: 공덕" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regionTag">태그 <span class="required">*</span></label>
+                            <input type="text" id="regionTag" placeholder="예: Business Hub" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="regionSortOrder">표시 순서</label>
+                            <input type="number" id="regionSortOrder" placeholder="1" min="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="regionImageUrl">이미지 경로</label>
+                        <input type="text" id="regionImageUrl" placeholder="예: assets/gongdeok.png 또는 https://...">
+                        <span class="form-hint">assets/ 폴더 내 파일명 또는 외부 이미지 URL</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="regionDescription">설명 <span class="required">*</span></label>
+                        <textarea id="regionDescription" rows="3" placeholder="권역에 대한 간략한 설명을 입력하세요." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="toggle-label">
+                            <span>활성 상태</span>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="regionIsActive" checked>
+                                <span class="toggle-slider"></span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="modalCancelBtn">취소</button>
+                    <button type="submit" class="btn-save" id="modalSaveBtn">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════════ Delete Confirm Modal ═══════════════ -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h2>권역 삭제</h2>
+                <button class="modal-close" id="deleteCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>정말 <strong id="deleteRegionName"></strong>을(를) 삭제하시겠습니까?</p>
+                <p class="delete-warning">이 작업은 되돌릴 수 없습니다.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="deleteCancelBtn">취소</button>
+                <button class="btn-delete" id="deleteConfirmBtn">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════ Page Add/Edit Modal ═══════════════ -->
+    <div class="modal-overlay" id="pageModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="pageModalTitle">문의 페이지 추가</h2>
+                <button class="modal-close" id="pageModalCloseBtn">&times;</button>
+            </div>
+            <form id="pageForm">
+                <input type="hidden" id="pageId">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pageTitle">페이지 제목 <span class="required">*</span></label>
+                            <input type="text" id="pageTitle" placeholder="예: 투자 상담 예약" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pageSlug">슬러그 (URL) <span class="required">*</span></label>
+                            <input type="text" id="pageSlug" placeholder="예: invest-consult" required>
+                            <span class="form-hint">영문, 숫자, 하이픈만 사용 (예: contact, invest)</span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pageBadge">배지 텍스트</label>
+                            <input type="text" id="pageBadge" placeholder="예: Contact Us" value="Contact Us">
+                        </div>
+                        <div class="form-group">
+                            <label for="pageInquiryType">문의 유형</label>
+                            <select id="pageInquiryType" class="modal-select">
+                                <option value="GENERAL">일반 상담 (GENERAL)</option>
+                                <option value="INVESTMENT">투자 문의 (INVESTMENT)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pageSubtitle">부제목</label>
+                        <input type="text" id="pageSubtitle" placeholder="예: 전문가와 함께하는 맞춤 상담">
+                    </div>
+                    <div class="form-group">
+                        <label for="pageDescription">설명</label>
+                        <textarea id="pageDescription" rows="2" placeholder="페이지 상단에 표시될 설명문"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pageSortOrder">표시 순서</label>
+                            <input type="number" id="pageSortOrder" placeholder="0" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="toggle-label">
+                                <span>활성 상태</span>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="pageIsActive" checked>
+                                    <span class="toggle-slider"></span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="pageModalCancelBtn">취소</button>
+                    <button type="submit" class="btn-save" id="pageModalSaveBtn">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════════ Field Add/Edit Modal ═══════════════ -->
+    <div class="modal-overlay" id="fieldModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="fieldModalTitle">항목 추가</h2>
+                <button class="modal-close" id="fieldModalCloseBtn">&times;</button>
+            </div>
+            <form id="fieldForm">
+                <input type="hidden" id="fieldId">
+                <input type="hidden" id="fieldPageId">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fieldLabel">항목 라벨 <span class="required">*</span></label>
+                            <input type="text" id="fieldLabel" placeholder="예: 이메일" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fieldName">필드명 (영문) <span class="required">*</span></label>
+                            <input type="text" id="fieldName" placeholder="예: email" required>
+                            <span class="form-hint">데이터 저장용 영문 키</span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fieldType">입력 유형</label>
+                            <select id="fieldType" class="modal-select">
+                                <option value="text">텍스트 (text)</option>
+                                <option value="tel">전화번호 (tel)</option>
+                                <option value="email">이메일 (email)</option>
+                                <option value="number">숫자 (number)</option>
+                                <option value="select">선택 (select)</option>
+                                <option value="textarea">긴 텍스트 (textarea)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fieldSortOrder">표시 순서</label>
+                            <input type="number" id="fieldSortOrder" placeholder="0" min="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="fieldPlaceholder">플레이스홀더</label>
+                        <input type="text" id="fieldPlaceholder" placeholder="예: 이메일을 입력해주세요">
+                    </div>
+                    <div class="form-group" id="fieldOptionsGroup" style="display:none">
+                        <label>선택 옵션 <span class="form-hint" style="display:inline">(줄바꿈으로 구분)</span></label>
+                        <textarea id="fieldOptions" rows="4" placeholder="옵션 1&#10;옵션 2&#10;옵션 3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="toggle-label">
+                            <span>필수 항목</span>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="fieldRequired" checked>
+                                <span class="toggle-slider"></span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="fieldModalCancelBtn">취소</button>
+                    <button type="submit" class="btn-save" id="fieldModalSaveBtn">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════════ Generic Delete Confirm Modal ═══════════════ -->
+    <div class="modal-overlay" id="genericDeleteModal">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h2 id="genericDeleteTitle">삭제 확인</h2>
+                <button class="modal-close" id="genericDeleteCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>정말 <strong id="genericDeleteName"></strong>을(를) 삭제하시겠습니까?</p>
+                <p class="delete-warning">이 작업은 되돌릴 수 없습니다.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="genericDeleteCancelBtn">취소</button>
+                <button class="btn-delete" id="genericDeleteConfirmBtn">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
