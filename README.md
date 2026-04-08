@@ -85,7 +85,7 @@ realp/
 npm install
 
 # 환경변수 설정 (.env 파일 생성)
-# DATABASE_URL=postgresql://...
+# NETLIFY_DATABASE_URL=postgresql://...
 
 # DB 스키마 동기화
 npm run db:sync
@@ -138,10 +138,10 @@ npm run dev
 
 | 변수명 | 설명 |
 |---|---|
-| `DATABASE_URL` | PostgreSQL 접속 URL (Neon DB) |
+| `NETLIFY_DATABASE_URL` | PostgreSQL 접속 URL (Neon DB) |
 
 > ⚠️ `.env` 파일은 `.gitignore`에 포함되어 있습니다. 절대 GitHub에 올리지 마세요.  
-> Netlify 배포 시에는 Netlify 대시보드의 Environment Variables에서 `DATABASE_URL`을 설정하세요.
+> Netlify 배포 시에는 Netlify 대시보드의 Environment Variables에서 `NETLIFY_DATABASE_URL`을 설정하세요.
 
 ---
 

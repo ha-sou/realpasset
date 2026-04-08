@@ -46,14 +46,14 @@ function loadEnvFile(projectRoot) {
 
 /**
  * Creates a pg Client with proper SSL config (suppresses pg v8 deprecation warning).
- * Requires DATABASE_URL to be set in process.env.
+ * Requires NETLIFY_DATABASE_URL to be set in process.env.
  */
 function createClient() {
   const { Client } = require('pg');
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString = process.env.NETLIFY_DATABASE_URL || process.env.DATABASE_URL;
 
   if (!connectionString) {
-    throw new Error('DATABASE_URL is not set in .env');
+    throw new Error('NETLIFY_DATABASE_URL is not set in .env');
   }
 
   // Strip sslmode from URL to avoid pg v8 deprecation warning

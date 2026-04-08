@@ -6,10 +6,10 @@ const { Client } = require('pg');
  * SSL is explicitly configured to suppress pg v8 deprecation warnings.
  */
 function createDbClient() {
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString = process.env.NETLIFY_DATABASE_URL || process.env.DATABASE_URL;
 
   if (!connectionString) {
-    throw new Error('DATABASE_URL environment variable is not set');
+    throw new Error('NETLIFY_DATABASE_URL environment variable is not set');
   }
 
   // Remove sslmode from connection string to avoid pg v8 deprecation warning
