@@ -13,17 +13,8 @@ function createDbClient() {
     throw new Error('DATABASE_URL environment variable is not set and no fallback available.');
   }
 
-  // Remove sslmode from connection string to avoid pg v8 deprecation warning
-  // and configure SSL explicitly via the ssl option
-  const url = new URL(connectionString);
-  url.searchParams.delete('sslmode');
-  const cleanUrl = url.toString();
-
   return new Client({
-    connectionString: cleanUrl,
-    ssl: {
-      rejectUnauthorized: true
-    }
+    connectionString
   });
 }
 

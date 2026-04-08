@@ -56,14 +56,8 @@ function createClient() {
     throw new Error('NETLIFY_DATABASE_URL is not set in .env');
   }
 
-  // Strip sslmode from URL to avoid pg v8 deprecation warning
-  const url = new URL(connectionString);
-  url.searchParams.delete('sslmode');
-  const cleanUrl = url.toString();
-
   return new Client({
-    connectionString: cleanUrl,
-    ssl: { rejectUnauthorized: true }
+    connectionString
   });
 }
 
