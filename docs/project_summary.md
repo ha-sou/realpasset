@@ -7,7 +7,6 @@
 - **GitHub:** https://github.com/ha-sou/realpasset.git (브랜치: master → main)
 - **호스팅:** Netlify
 - **데이터베이스:** PostgreSQL (Neon DB)
-- **DB 연결:** `postgresql://neondb_owner:npg_fCkTeHDp69dB@ep-bold-scene-a1n3azr4-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require`
 - **어드민 로그인:** ID: `realpasset` / PW: `s8888885!`
 
 ---
@@ -34,6 +33,7 @@ D:\realp/
 ├── styles.css              # 메인 스타일시트
 ├── netlify.toml            # Netlify 설정
 ├── package.json            # Node.js 의존성
+├── README.md               # 프로젝트 문서 (한국어)
 │
 ├── admin/                  # 관리자 대시보드
 │   ├── index.html          # 대시보드 메인
@@ -42,6 +42,7 @@ D:\realp/
 │   └── admin.css           # 대시보드 스타일
 │
 ├── netlify/functions/      # 서버리스 함수 (API)
+│   ├── utils/db.js         # ★ 공통 DB 연결 유틸리티 (NEW)
 │   ├── admin-auth.js       # 어드민 로그인 인증
 │   ├── admin-inquiries.js  # 문의 내역 관리 (GET/PATCH)
 │   ├── admin-inquiry-pages.js # 문의 페이지/필드 CRUD
@@ -50,14 +51,19 @@ D:\realp/
 │   ├── regions.js          # 권역 조회 (프론트엔드용)
 │   └── submit-inquiry.js   # 문의 제출 처리
 │
-├── scripts/                # DB 마이그레이션 스크립트
+├── scripts/                # DB 스크립트
+│   ├── load-env.js         # 환경변수 로더 + createClient 유틸
+│   ├── start-netlify.js    # 로컬 개발 서버
+│   ├── sync_db.js          # ★ 전체 스키마 동기화 (루트에서 이동)
+│   ├── check_db.js         # DB 상태 확인
 │   ├── db_init_admin.js    # 어드민 계정 초기화
 │   ├── migrate_users.js    # users 테이블 마이그레이션
 │   ├── migrate_inquiry_pages.js  # inquiry_pages/fields 테이블 생성
-│   └── migrate_fix_inquiries.js  # inquiries 테이블 수정 (message nullable, type VARCHAR)
+│   └── migrate_fix_inquiries.js  # inquiries 테이블 수정
 │
 ├── docs/                   # 프로젝트 문서
-│   └── db_schema.md        # DB 스키마 문서
+│   ├── db_schema.md        # DB 스키마 문서
+│   └── project_summary.md  # 이 문서
 │
 └── assets/                 # 이미지, SVG 등 정적 자원
 ```
@@ -123,7 +129,9 @@ D:\realp/
 |---|---|---|
 | id | UUID (PK) | 고유 ID |
 | email/name | VARCHAR | 계정 정보 |
+| password_hash | VARCHAR(255) | 비밀번호 해시 |
 | role | VARCHAR(20) | ADMIN / STAFF |
+| last_login | TIMESTAMP | 마지막 로그인 |
 
 ---
 
@@ -156,20 +164,18 @@ D:\realp/
 | 이슈 | 원인 | 해결 |
 |---|---|---|
 | 라이브에서 모달이 전부 보임 | Netlify 에셋 번들링이 이전 JS/CSS 캐시 사용 | `skip_processing = true` |
-| 투자정보 데이터 로드 실패 | `regions.js`, `admin-regions.js`에 fallback DB URL 없음 | fallback URL 추가 |
+| 투자정보 데이터 로드 실패 | `regions.js`, `admin-regions.js`에 fallback DB URL 없음 | 공통 DB 유틸리티 생성 |
 | 동적 폼 제출 시 DB 에러 | `message TEXT NOT NULL` 제약 | nullable로 변경 |
 | 커스텀 문의 타입 불가 | `type` 컬럼이 ENUM | VARCHAR(50)으로 변환 |
+| **DB 크레덴셜 하드코딩** | 모든 함수/스크립트에 DB URL 직접 작성 | `utils/db.js` 공통 유틸 생성 |
+| **DB 스키마 불일치** | users 테이블에 password_hash/last_login 누락 | `sync_db.js` 스키마 통합 수정 |
+| **환경변수명 비일관성** | DATABASE_URL vs 하드코딩 | 전체 통일 (DATABASE_URL) |
+| **SSL 경고** | pg v8 sslmode 처리 | sslmode 분리 + ssl 옵션 명시 |
+| **sync_db.js 위치 혼란** | 루트에 방치 | `scripts/`로 이동 |
+| **README.md 부재** | 미작성 | 한국어 README 신규 생성 |
 
 ### ⚠️ 주의사항
 - **Netlify 에셋 처리:** `skip_processing = true`로 설정되어 있음. 다시 활성화하면 JS/CSS 캐시 문제 재발할 수 있음
 - **Git 브랜치:** 로컬은 `master`, 원격은 `main`. Push 시 `git push origin master:main`
 - **Push 규칙:** 사용자가 요청할 때만 Push할 것
-
----
-
-## 미푸시 커밋 (2026-04-08 기준)
-
-1. `fix: disable CSS/JS bundling`
-2. `fix: disable all asset processing to prevent JS/CSS cache corruption`
-3. `fix: DB migration, submit-inquiry flexibility, schema docs update`
-4. `fix: add fallback DB URL to regions and admin-regions functions`
+- **Netlify 환경변수:** 배포 시 Netlify 대시보드에서 `DATABASE_URL` 환경변수를 설정해야 함

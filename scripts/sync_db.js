@@ -1,13 +1,11 @@
-const { Client } = require('pg');
+const path = require('path');
+const { loadEnvFile, createClient } = require('./load-env');
 
-const connectionString = 'postgresql://neondb_owner:npg_fCkTeHDp69dB@ep-bold-scene-a1n3azr4-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+loadEnvFile(path.resolve(__dirname, '..'));
 
 const sql = `
 DO $$ 
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'inquiry_type') THEN
-        CREATE TYPE inquiry_type AS ENUM ('GENERAL', 'INVESTMENT');
-    END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'inquiry_status') THEN
         CREATE TYPE inquiry_status AS ENUM ('PENDING', 'CONTACTED', 'COMPLETED', 'CANCELLED');
     END IF;
@@ -17,19 +15,21 @@ CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR(255) UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL,
+    password_hash VARCHAR(255),
     role VARCHAR(20) DEFAULT 'STAFF',
+    last_login TIMESTAMP,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS inquiries (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    type inquiry_type NOT NULL,
+    type VARCHAR(50) NOT NULL DEFAULT 'GENERAL',
     name VARCHAR(100) NOT NULL,
     phone VARCHAR(20) NOT NULL,
     sector VARCHAR(100),
     region VARCHAR(100),
     budget VARCHAR(50),
-    message TEXT NOT NULL,
+    message TEXT DEFAULT '-',
     status inquiry_status DEFAULT 'PENDING',
     assigned_to UUID REFERENCES users(id),
     created_at TIMESTAMP DEFAULT NOW(),
@@ -49,19 +49,48 @@ CREATE TABLE IF NOT EXISTS regions (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS inquiry_pages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(200) NOT NULL,
+    slug VARCHAR(100) UNIQUE NOT NULL,
+    subtitle TEXT DEFAULT '',
+    description TEXT DEFAULT '',
+    badge_text VARCHAR(50) DEFAULT 'Contact',
+    inquiry_type VARCHAR(20) DEFAULT 'GENERAL',
+    is_active BOOLEAN DEFAULT true,
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS inquiry_fields (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    page_id UUID NOT NULL REFERENCES inquiry_pages(id) ON DELETE CASCADE,
+    field_name VARCHAR(100) NOT NULL,
+    field_label VARCHAR(200) NOT NULL,
+    field_type VARCHAR(30) DEFAULT 'text',
+    placeholder VARCHAR(300) DEFAULT '',
+    is_required BOOLEAN DEFAULT true,
+    options JSONB DEFAULT '[]',
+    sort_order INTEGER DEFAULT 0
+);
+
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_inquiries_status') THEN
         CREATE INDEX idx_inquiries_status ON inquiries(status);
-    END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_inquiries_type') THEN
-        CREATE INDEX idx_inquiries_type ON inquiries(type);
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_inquiries_created_at') THEN
         CREATE INDEX idx_inquiries_created_at ON inquiries(created_at);
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_regions_sort_order') THEN
         CREATE INDEX idx_regions_sort_order ON regions(sort_order);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_inquiry_pages_slug') THEN
+        CREATE INDEX idx_inquiry_pages_slug ON inquiry_pages(slug);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_inquiry_fields_page_id') THEN
+        CREATE INDEX idx_inquiry_fields_page_id ON inquiry_fields(page_id);
     END IF;
 END $$;
 `;
@@ -81,7 +110,7 @@ WHERE NOT EXISTS (SELECT 1 FROM regions LIMIT 1);
 `;
 
 async function sync() {
-    const client = new Client({ connectionString });
+    const client = createClient();
     try {
         await client.connect();
         console.log('Connected to database');

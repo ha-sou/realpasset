@@ -2,13 +2,17 @@
   "name": "proptech-landing",
   "version": "1.0.0",
   "description": "",
-  "main": "sync_db.js",
+  "main": "index.html",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "start": "npx netlify dev",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node scripts/start-netlify.js",
+    "dev": "node scripts/start-netlify.js",
+    "db:check": "node scripts/check_db.js",
+    "db:sync": "node scripts/sync_db.js",
+    "db:init-admin": "node scripts/db_init_admin.js",
+    "test": "node -e \"console.log('No automated tests configured')\""
   },
   "repository": {
     "type": "git",

@@ -2,12 +2,13 @@
  * Migration: Create inquiry_pages and inquiry_fields tables
  * Run: node scripts/migrate_inquiry_pages.js
  */
-const { Client } = require('pg');
+const path = require('path');
+const { loadEnvFile, createClient } = require('./load-env');
 
-const dbUrl = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_fCkTeHDp69dB@ep-bold-scene-a1n3azr4-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+loadEnvFile(path.resolve(__dirname, '..'));
 
 async function migrate() {
-  const client = new Client({ connectionString: dbUrl });
+  const client = createClient();
   await client.connect();
 
   console.log('🔧 Creating inquiry_pages table...');

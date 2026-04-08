@@ -1,13 +1,14 @@
-const { Client } = require('pg');
 const crypto = require('crypto');
+const path = require('path');
+const { loadEnvFile, createClient } = require('./load-env');
+
+loadEnvFile(path.resolve(__dirname, '..'));
 
 // SHA-256 hash for 's8888885!'
 const passwordHash = crypto.createHash('sha256').update('s8888885!').digest('hex');
 
-const connectionString = 'postgresql://neondb_owner:npg_fCkTeHDp69dB@ep-bold-scene-a1n3azr4-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
-
 async function initAdmin() {
-    const client = new Client({ connectionString });
+    const client = createClient();
     try {
         await client.connect();
         
@@ -17,8 +18,9 @@ async function initAdmin() {
                 id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                 email VARCHAR(255) UNIQUE NOT NULL,
                 name VARCHAR(100) NOT NULL,
-                password_hash VARCHAR(255) NOT NULL,
+                password_hash VARCHAR(255),
                 role VARCHAR(20) DEFAULT 'STAFF',
+                last_login TIMESTAMP,
                 created_at TIMESTAMP DEFAULT NOW()
             );
         `);

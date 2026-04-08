@@ -1,6 +1,7 @@
 node_modules/
 .env
 .netlify/
+.netlify-cli/
 dist/
 build/
 *.log

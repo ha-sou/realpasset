@@ -1,4 +1,4 @@
-const { Client } = require('pg');
+const { createDbClient } = require('./utils/db');
 const crypto = require('crypto');
 
 exports.handler = async (event, context) => {
@@ -17,11 +17,7 @@ exports.handler = async (event, context) => {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  const dbUrl = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_fCkTeHDp69dB@ep-bold-scene-a1n3azr4-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
-
-  const client = new Client({
-    connectionString: dbUrl
-  });
+  const client = createDbClient();
 
   try {
     const { email, password } = JSON.parse(event.body);

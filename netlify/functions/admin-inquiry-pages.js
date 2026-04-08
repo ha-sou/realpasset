@@ -1,4 +1,4 @@
-const { Client } = require('pg');
+const { createDbClient } = require('./utils/db');
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -6,17 +6,12 @@ const headers = {
   'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS'
 };
 
-function getClient() {
-  const dbUrl = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_fCkTeHDp69dB@ep-bold-scene-a1n3azr4-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
-  return new Client({ connectionString: dbUrl });
-}
-
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers };
   }
 
-  const client = getClient();
+  const client = createDbClient();
 
   try {
     await client.connect();

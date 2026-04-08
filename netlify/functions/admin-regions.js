@@ -1,4 +1,4 @@
-const { Client } = require('pg');
+const { createDbClient } = require('./utils/db');
 
 exports.handler = async (event, context) => {
   const headers = {
@@ -11,11 +11,7 @@ exports.handler = async (event, context) => {
     return { statusCode: 200, headers };
   }
 
-  const dbUrl = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_fCkTeHDp69dB@ep-bold-scene-a1n3azr4-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
-
-  const client = new Client({
-    connectionString: dbUrl
-  });
+  const client = createDbClient();
 
   try {
     await client.connect();

@@ -1,4 +1,4 @@
-const { Client } = require('pg');
+const { createDbClient } = require('./utils/db');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -15,8 +15,7 @@ exports.handler = async (event) => {
     return { statusCode: 405, headers: corsHeaders, body: 'Method Not Allowed' };
   }
 
-  const dbUrl = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_fCkTeHDp69dB@ep-bold-scene-a1n3azr4-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
-  const client = new Client({ connectionString: dbUrl });
+  const client = createDbClient();
 
   try {
     const data = JSON.parse(event.body);
